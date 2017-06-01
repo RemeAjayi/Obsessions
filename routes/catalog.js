@@ -36,7 +36,7 @@ router.post('/post/:id/update', post_controller.post_update_post);
 router.get('/post/:id', post_controller.post_full_content);
 
 /* GET request for list of all Post items. */
-router.get('post', post_controller.post_list);
+router.get('/posts', post_controller.post_list);
 
 /// AUTHOR ROUTES ///
 
