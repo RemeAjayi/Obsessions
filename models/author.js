@@ -11,7 +11,7 @@ var AuthorSchema = Schema(
         family_name: {type: String, required: true, max: 100},
         email: {type: String, required: true},
         bio: {type: String, required: true},
-        url: {type: String, max: 100}
+        link: {type: String, max: 100}
     }
 );
 
