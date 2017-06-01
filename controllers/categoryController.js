@@ -15,12 +15,57 @@ exports.category_detail = function(req, res) {
 
 // Display Category create form on GET
 exports.category_create_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: Category create GET');
+    res.render('category_form', { title: 'Create Category' });
 };
 
-// Handle Category create on POST
-exports.category_create_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: Category create POST');
+// Handle Genre create on POST
+exports.category_create_post = function(req, res, next) {
+
+    //Check that the name field is not empty
+    req.checkBody('name', 'Category name required').notEmpty();
+
+    //Trim and escape the name field.
+    req.sanitize('name').escape();
+    req.sanitize('name').trim();
+
+    //Run the validators
+    var errors = req.validationErrors();
+
+    //Create a genre object with escaped and trimmed data.
+    var category = new Category(
+        { name: req.body.name }
+    );
+
+    if (errors) {
+        //If there are errors render the form again, passing the previously entered values and errors
+        res.render('category_form', { title: 'Create Category', category: category, errors: errors});
+        return;
+    }
+    else {
+        // Data from form is valid.
+        //Check if Genre with same name already exists
+        Category.findOne({ 'name': req.body.name })
+            .exec( function(err, found_category) {
+                console.log('found_category: ' + found_category);
+                if (err) { return next(err); }
+
+                if (found_category) {
+                    //Genre exists, redirect to its detail page
+                    res.redirect(found_category.url);
+                }
+                else {
+
+                    category.save(function (err) {
+                        if (err) { return next(err); }
+                        //Category saved. Redirect to genre detail page
+                        res.redirect(category.url);
+                    });
+
+                }
+
+            });
+    }
+
 };
 
 // Display Category delete form on GET
